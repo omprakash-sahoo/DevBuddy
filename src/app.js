@@ -1,4 +1,5 @@
 const express = require("express");
+const { adminAuth, userAuth } = require("./middleware/auth");
 
 const app = express();
 // app.use("/about", (req, res) => {
@@ -30,32 +31,23 @@ const app = express();
 
 // =============== MIDDLEWARE =================
 
-app.get(
-  "/user",
-  (req, res, next) => {
-    console.log("Handler 1");
-    next(); // go to next handler
-  },
-  (req, res, next) => {
-    console.log("Handler 2");
-    next(); // go to next
-  },
-  (req, res) => {
-    res.send("Final Response");
-  }
-);
+// app.get(
+//   "/user",
+//   (req, res, next) => {
+//     console.log("Handler 1");
+//     next(); // go to next handler
+//   },
+//   (req, res, next) => {
+//     console.log("Handler 2");
+//     next(); // go to next
+//   },
+//   (req, res) => {
+//     res.send("Final Response");
+//   }
+// );
 
 //================Handle Auth middle ware for all request============
-app.use("/admin", (req, res, next) => {
-  console.log("Admin auth is checked");
-  const token = "xyz";
-  const authorization = token == "xyz";
-  if (!authorization) {
-    res.status(401).send("Unauthorized");
-  } else {
-    next();
-  }
-});
+app.use("/admin", adminAuth);
 
 app.get("/admin/getAlluser", (req, res) => {
   res.send("Get all user");
@@ -65,6 +57,9 @@ app.get("/admin/deleteUser", (req, res) => {
   res.send("delete a user");
 });
 
+app.get("/user", userAuth, (req, res) => {
+  res.send("User api callled");
+});
 app.listen(3001, () => {
   console.log("Server is running");
 });
