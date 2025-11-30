@@ -45,6 +45,26 @@ app.get(
   }
 );
 
+//================Handle Auth middle ware for all request============
+app.use("/admin", (req, res, next) => {
+  console.log("Admin auth is checked");
+  const token = "xyz";
+  const authorization = token == "xyz";
+  if (!authorization) {
+    res.status(401).send("Unauthorized");
+  } else {
+    next();
+  }
+});
+
+app.get("/admin/getAlluser", (req, res) => {
+  res.send("Get all user");
+});
+
+app.get("/admin/deleteUser", (req, res) => {
+  res.send("delete a user");
+});
+
 app.listen(3001, () => {
   console.log("Server is running");
 });
