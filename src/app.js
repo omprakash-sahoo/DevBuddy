@@ -7,7 +7,7 @@ const app = express();
 // app.use("/", (req, res) => {
 //   res.send("This home page");
 // });
-// app.get("/about", (req, res) => {
+// app.get("/about", (req, res) => {c
 //   res.send("Hello");
 // });
 // app.post("/post", (req, res) => {
