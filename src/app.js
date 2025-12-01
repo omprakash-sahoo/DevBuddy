@@ -1,5 +1,5 @@
 const express = require("express");
-const { adminAuth, userAuth } = require("./middleware/auth");
+// const { adminAuth, userAuth } = require("./middleware/auth");
 
 const app = express();
 // app.use("/about", (req, res) => {
@@ -47,18 +47,27 @@ const app = express();
 // );
 
 //================Handle Auth middle ware for all request============
-app.use("/admin", adminAuth);
+// app.use("/admin", adminAuth);
 
-app.get("/admin/getAlluser", (req, res) => {
-  res.send("Get all user");
+// app.get("/admin/getAlluser", (req, res) => {
+//   res.send("Get all user");
+// });
+
+// app.get("/admin/deleteUser", (req, res) => {
+//   res.send("delete a user");
+// });
+
+// app.get("/user", userAuth, (req, res) => {
+//   res.send("User api callled");
+// });
+app.get("/getUserData", (req, res) => {
+  throw new Error("Ranfom error");
 });
 
-app.get("/admin/deleteUser", (req, res) => {
-  res.send("delete a user");
-});
-
-app.get("/user", userAuth, (req, res) => {
-  res.send("User api callled");
+app.use("/", (err, req, res, next) => {
+  if (err) {
+    res.status(500).send("Somwthing went wrong");
+  }
 });
 app.listen(3001, () => {
   console.log("Server is running");
