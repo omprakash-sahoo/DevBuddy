@@ -1,6 +1,6 @@
 const express = require("express");
 require("./config/database");
-
+const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user");
 
@@ -20,8 +20,6 @@ app.post("/signUp", async (req, res) => {
     console.log(err);
   }
 });
-
-const connectDB = require("./config/database");
 
 connectDB()
   .then(() => {
