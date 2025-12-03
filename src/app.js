@@ -12,7 +12,7 @@ app.post("/signup", async (req, res) => {
     res.status(201).send("Sign up Successfully");
   } catch (err) {
     console.error(err);
-    res.status(500).send("Internal Server Error");
+    res.status(500).send("SignUp Error" + err.message);
   }
 });
 
