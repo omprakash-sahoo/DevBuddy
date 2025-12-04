@@ -40,7 +40,8 @@ app.post("/signIn", async (req, res) => {
     if (user) {
       const match = await bcrypt.compare(req.body.passWord, user.passWord);
       if (match) {
-        res.cookie("token", "HelloCookie");
+        const token = await jwt.sign({ _id: user._id }, "Hello@123");
+        res.cookie("token", token);
       } else {
         throw new Error("Invalid Credentials");
       }
@@ -52,8 +53,13 @@ app.post("/signIn", async (req, res) => {
     res.status(400).send(err.message);
   }
 });
-app.get("/profile", (req, res) => {
-  res.send(req.cookies);
+app.get("/profile", async (req, res) => {
+  // const cookie =
+  const { token } = req.cookies;
+  var decoded = await jwt.verify(token, "Hello@123");
+  const { _id } = decoded;
+  const userData = await User.findOne({ _id, _id });
+  res.send(userData);
 });
 app.get("/user", async (req, res) => {
   try {
