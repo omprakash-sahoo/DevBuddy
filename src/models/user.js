@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = mongoose.Schema(
   {
@@ -12,21 +13,25 @@ const userSchema = mongoose.Schema(
     },
     passWord: {
       type: String,
+      validate(value) {
+        if (!validator.isStrongPassword(value)) {
+          throw new Error("Not a strong Password");
+        }
+      },
     },
     age: {
       type: Number,
       min: 18,
     },
-    emaiId: {
+    emailId: {
       type: String,
       required: true,
       unique: true,
       trim: true,
-      validate: {
-        validator: function (value) {
-          return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-        },
-        message: (props) => `${props.value} is not a valid email!`,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Not a valid email");
+        }
       },
     },
     description: {

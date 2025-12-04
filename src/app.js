@@ -2,12 +2,27 @@ const express = require("express");
 const app = express();
 const connectDB = require("./config/database");
 const User = require("./models/user");
+const validator = require("validator");
+const { signUpValidation } = require("./utils/validation");
+const bcrypt = require("bcrypt");
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-  console.log(req.body);
-  const user = new User(req.body);
+  console.log(req.body.firstName);
   try {
+    signUpValidation(req);
+    const { firstName, lastName, emailId, passWord, age, gender, skills } =
+      req.body;
+    const hashPwd = await bcrypt.hash(passWord, 10);
+    const user = new User({
+      firstName,
+      lastName,
+      emailId,
+      passWord: hashPwd,
+      age,
+      gender,
+      skills,
+    });
     await user.save();
     res.status(201).send("Sign up Successfully");
   } catch (err) {
@@ -16,6 +31,23 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+app.post("/signIn", async (req, res) => {
+  try {
+    const user = await User.findOne({ emailId: req.body.emailId });
+    if (user) {
+      const match = await bcrypt.compare(req.body.passWord, user.passWord);
+      if (match) {
+      } else {
+        throw new Error("Invalid Credentials");
+      }
+    } else {
+      throw new Error("Invalid Credentials");
+    }
+    res.send("Loging Success!!");
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
+});
 app.get("/user", async (req, res) => {
   try {
     const userEmail = await User.findOne({ emailId: "rahul@gmai.com" });
@@ -50,14 +82,18 @@ app.delete("/delete", async (req, res) => {
   }
 });
 
-app.patch("/update", async (req, res) => {
-  const userId = req.body.userId;
-  const updateUser = await User.findByIdAndUpdate({ _id: userId }, req.body, {
-    // returnDocument: "before",
-    lean: false,
-  });
-
-  res.send(updateUser);
+app.patch("/update/:user_id", async (req, res) => {
+  try {
+    const userId = req.params.user_id;
+    // console.log(userId);
+    const updateUser = await User.findByIdAndUpdate({ _id: userId }, req.body, {
+      // returnDocument: "before",
+      // lean: false,
+    });
+    res.send(userId);
+  } catch (err) {
+    res.status(401).send(err.message);
+  }
 });
 
 connectDB()
