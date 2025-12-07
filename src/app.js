@@ -39,9 +39,11 @@ app.post("/signIn", async (req, res) => {
   try {
     const user = await User.findOne({ emailId: req.body.emailId });
     if (user) {
-      const match = await bcrypt.compare(req.body.passWord, user.passWord);
+      const match = user.validatePassword(req.body.passWord);
+      //validatePassword is a schema method and defined in userSchema
       if (match) {
-        const token = await jwt.sign({ _id: user._id }, "Hello@123");
+        const token = user.getJwt();
+        //getJwt is a schema method and defined in userSchema
         res.cookie("token", token);
       } else {
         throw new Error("Invalid Credentials");

@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
 
 const userSchema = mongoose.Schema(
   {
@@ -51,25 +53,15 @@ const userSchema = mongoose.Schema(
   },
   { timestamps: true }
 );
-
+userSchema.methods.getJwt = function () {
+  const user = this;
+  const token = jwt.sign({ _id: user._id }, "Hello@123");
+  return token;
+};
+userSchema.methods.validatePassword = function (inputPasswordByUser) {
+  const user = this;
+  const match = bcrypt.compare(inputPasswordByUser, user.passWord);
+  return match;
+};
 const User = mongoose.model("User", userSchema);
 module.exports = User;
-
-// const mongoose = require("mongoose");
-
-// const UserSchema = mongoose.Schema({
-
-// });
-
-// const User = mongoose.model("User", UserSchema);
-
-// module.export = User;
-
-// // const mongoose = require("mongoose");
-
-// // const userSchema = mongoose.Schema({
-
-// // });
-// // const User = mongoose.model("User", userSchema);
-
-// // module.exports = User;
