@@ -7,6 +7,7 @@ const { signUpValidation } = require("./utils/validation");
 var cookieParser = require("cookie-parser");
 var jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { userAUth } = require("./middleware/auth");
 app.use(cookieParser());
 app.use(express.json());
 
@@ -53,13 +54,12 @@ app.post("/signIn", async (req, res) => {
     res.status(400).send(err.message);
   }
 });
-app.get("/profile", async (req, res) => {
-  // const cookie =
-  const { token } = req.cookies;
-  var decoded = await jwt.verify(token, "Hello@123");
-  const { _id } = decoded;
-  const userData = await User.findOne({ _id, _id });
-  res.send(userData);
+app.get("/profile", userAUth, async (req, res) => {
+  try {
+    res.send(req.user);
+  } catch (err) {
+    res.status(400).send(err.message);
+  }
 });
 app.get("/user", async (req, res) => {
   try {
