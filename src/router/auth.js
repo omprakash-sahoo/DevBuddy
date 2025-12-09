@@ -3,14 +3,24 @@ const authRouter = express.Router();
 const User = require("../models/user");
 // const User = require("./models/user");
 const bcrypt = require("bcrypt");
-const { signUpValidation } = require("../utils/validation");
+// const { signUpValidation } = require("../utils/validation");
+const { now } = require("mongoose");
 
 authRouter.post("/signup", async (req, res) => {
   console.log(req.body.firstName);
   try {
-    signUpValidation(req);
-    const { firstName, lastName, emailId, passWord, age, gender, skills } =
-      req.body;
+    // signUpValidation(req);
+    const {
+      firstName,
+      lastName,
+      emailId,
+      passWord,
+      age,
+      gender,
+      skills,
+      avatar,
+      about,
+    } = req.body;
     const hashPwd = await bcrypt.hash(passWord, 10);
     const user = new User({
       firstName,
@@ -20,6 +30,8 @@ authRouter.post("/signup", async (req, res) => {
       age,
       gender,
       skills,
+      avatar,
+      about,
     });
     await user.save();
     res.status(201).send("Sign up Successfully");
@@ -49,6 +61,12 @@ authRouter.post("/signIn", async (req, res) => {
   } catch (err) {
     res.status(400).send(err.message);
   }
+});
+
+authRouter.post("/logout", (req, res) => {
+  res
+    .cookie("token", null, { expires: new Date(Date.now()) })
+    .send("Logout successfully");
 });
 
 module.exports = authRouter;

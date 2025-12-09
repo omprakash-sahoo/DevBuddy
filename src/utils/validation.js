@@ -1,9 +1,18 @@
 const validator = require("validator");
-const signUpValidation = (req) => {
-  if (!validator.isEmail(req.body.emailId)) {
-    throw new Error("In valid Email Id.");
-  }
+
+const validateEditProfileData = (req) => {
+  const allowedEdit = [
+    "firstName",
+    "lastName",
+    "age",
+    "emailId",
+    "skills",
+    "avatar",
+    "about",
+  ];
+  const isEditAllowed = Object.keys(req.body).every((field) =>
+    allowedEdit.includes(field)
+  );
+  return isEditAllowed;
 };
-module.exports = {
-  signUpValidation,
-};
+module.exports = { validateEditProfileData };

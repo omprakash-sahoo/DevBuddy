@@ -50,6 +50,12 @@ const userSchema = mongoose.Schema(
     skills: {
       type: [String],
     },
+    avatar: {
+      type: String,
+    },
+    about: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
