@@ -5,10 +5,12 @@ const ConnectionRequestSchema = new mongoose.Schema(
     fromUserId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
+      index: true,
     },
     toUserId: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
+      index: true,
     },
     status: {
       type: String,
@@ -23,6 +25,14 @@ const ConnectionRequestSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+// Pre Hokes to check before every save
+ConnectionRequestSchema.pre("save", function (next) {
+  const connectionReq = this;
+  if (connectionReq.fromUserId.equals(this.toUserId)) {
+    throw new Error("Connection Req can't sent to yourself");
+  }
+  next();
+});
 const ConnectionRequest = new mongoose.model(
   "ConnectionRequest",
   ConnectionRequestSchema

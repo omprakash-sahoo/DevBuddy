@@ -16,6 +16,9 @@ requestRouter.post(
       if (!allowedStatus.includes(status)) {
         throw new Error("Invalid status");
       }
+      if (fromUserId == toUserId) {
+        throw new Error("You can't send request to yourself");
+      }
       const toUserExist = await User.findOne({ _id: toUserId });
       if (!toUserExist) {
         throw new Error("User in not exist");
@@ -29,6 +32,7 @@ requestRouter.post(
       if (existingConnectionRequest) {
         throw new Error("Connection Request is exist");
       }
+
       const connectionRequest = new ConnectionRequest({
         fromUserId,
         toUserId,
