@@ -16,9 +16,11 @@ app.use((err, req, res, next) => {
 
 const authRouter = require("./router/auth");
 const profileRouter = require("./router/profile");
+const requestRouter = require("./router/connection");
 
 app.use("/", authRouter);
 app.use("/", profileRouter);
+app.use("/", requestRouter);
 
 connectDB()
   .then(() => {
