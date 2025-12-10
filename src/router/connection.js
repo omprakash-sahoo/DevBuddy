@@ -20,6 +20,15 @@ requestRouter.post(
       if (!toUserExist) {
         throw new Error("User in not exist");
       }
+      const existingConnectionRequest = await ConnectionRequest.findOne({
+        $or: [
+          { fromUserId, toUserId }, // A → B
+          { fromUserId: toUserId, toUserId: fromUserId }, // B → A
+        ],
+      });
+      if (existingConnectionRequest) {
+        throw new Error("Connection Request is exist");
+      }
       const connectionRequest = new ConnectionRequest({
         fromUserId,
         toUserId,
