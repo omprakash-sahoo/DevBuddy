@@ -2,9 +2,28 @@ const express = require("express");
 const app = express();
 const connectDB = require("./config/database");
 const User = require("./models/user");
-var cookieParser = require("cookie-parser");
+const cookieParser = require("cookie-parser");
+var cors = require("cors");
+
 app.use(cookieParser());
 app.use(express.json());
+
+// Replace default cors() with specific origin + credentials
+const corsOptions = {
+  origin: "http://localhost:5173",
+  credentials: true,
+  // optional: you can restrict headers/methods if needed
+  // allowedHeaders: ["Content-Type", "Authorization"],
+  // methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+};
+app.use(cors(corsOptions));
+// add OPTIONS-only preflight handler that avoids registering a '*' route
+app.use((req, res, next) => {
+  if (req.method === "OPTIONS") {
+    return cors(corsOptions)(req, res, next);
+  }
+  next();
+});
 
 // handle JSON parse errors from body-parser / express.json
 app.use((err, req, res, next) => {
